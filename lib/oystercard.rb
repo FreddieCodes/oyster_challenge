@@ -13,6 +13,7 @@ class Oystercard
     @balance = balance
     @limit = CARD_LIMIT
     @journeys = []
+    @current_journey = nil
   end
 
   def top_up(amount)
@@ -22,16 +23,18 @@ class Oystercard
   end
 
   def touch_in(station)
-    # touchin * 2  PEN_FARE
-
+    # if current journey != nil then pen fare
+    # @current_journey = Journey.new(station)
     raise 'Insufficient funds' if insufficient_funds?
     @journeys << { in: station.name, out: 'nil' }
     # @journeys << {in: "#{station.name}(#{station.zone})", out: "nil"}
   end
 
   def touch_out(station)
-    # touchout *2 PEN FARE
-    deduct(MIN_FARE)
+    # if no current journey do @current_journey=Journey.new
+    # end jny
+    # add this journey to @journeys array
+    # @current_journey.fare
     @journeys.last[:out] = station.name
     # @journeys[@trip_no-1][:out] = "#{station.name}(#{station.zone})"
   end

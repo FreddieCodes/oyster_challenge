@@ -27,7 +27,6 @@ describe Oystercard do
 
   it "raises error when topping up over limit" do
     subject.top_up 90
-    # message
     expect { subject.top_up 10 } .to raise_error "Top-up limit of #{subject.limit} reached"
   end
 
@@ -37,10 +36,9 @@ describe Oystercard do
   it "has a default status of not in use" do
     expect(subject.in_journey?).to eq "not in use"
   end
-  let(:station) { double :station }
+
   it "can record touch in station" do
     subject.top_up(5)
-    # station = Station.new("Paddington")
     allow(station).to receive(:name).and_return("Paddington")
     subject.touch_in(station)
     expect(subject.journeys).to eq([{ in: "Paddington", out: "nil" }])
@@ -90,5 +88,43 @@ describe Oystercard do
     it "creates one journey when touching in then out" do
       expect(subject.journeys.length).to eq 1
     end
+
   end
+
+  context 'touching in' do
+
+    it 'checks if a journey is already in progress and charges pen fare if true' do
+
+    end
+
+    it 'starts a new journey when touching in' do
+
+    end
+
+  end
+
+  context 'touching out' do
+
+    it "if we haven't touched in, touch-out instantiates a new journey with no entry station" do
+
+    end
+
+    it 'calls end journey on the current journey' do
+
+    end
+
+    it "if new (penalty) journey instantiated, add it to journeys array" do
+
+    end
+
+    it 'charges a fare on current journey' do
+
+    end
+
+    it 'resets current journey' do
+
+    end
+
+  end
+
 end

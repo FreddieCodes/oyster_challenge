@@ -28,5 +28,26 @@ describe Journey do
     expect(journey.end_station).to eq station
   end
 
- end
+end
+
+  context 'charges a relevant fare' do
+
+    it "standard fare if touched in and out" do
+      journey.end_journey(station1)
+      expect(journey.fare).to eq Journey::MIN_FARE
+    end
+
+    it "penalty fare if touched in but not out" do
+      expect(journey.fare).to eq Journey::PEN_FARE
+    end
+
+    it "penalty fare if touched out but not in" do
+      subject.end_journey(station1)
+      expect(subject.fare).to eq Journey::PEN_FARE
+    end
+
+  end
+
+  context ''
+
 end
