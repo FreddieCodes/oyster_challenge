@@ -146,6 +146,9 @@ describe Oystercard do
     #     subject.touch_out(station)
     # end
 
+    # 3 tests removed as they were causing issues and were only testing the internal aspects
+    # of the touch_in method rather than the actual desired outcome (following discussion with Kay)
+
     it "if new (penalty) journey instantiated, add it to journeys array" do
       expect { subject.touch_out(station) }.to change { subject.journeys.length }. by 1
     end
