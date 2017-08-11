@@ -1,4 +1,7 @@
 # require_relative "./station.rb"
+require 'station'
+require 'journey'
+
 
 class Oystercard
   DEFAULT_BALANCE = 0
@@ -23,7 +26,7 @@ class Oystercard
   end
 
   def touch_in(station)
-    deduct(@current_journey.fare) if @current_journey != nil
+    deduct(@current_journey.fare) if !@current_journey.nil?
     @current_journey = Journey.new(station)
     raise 'Insufficient funds' if insufficient_funds?
     @journeys << { in: station.name, out: 'nil' }
@@ -31,11 +34,17 @@ class Oystercard
   end
 
   def touch_out(station)
-    # if no current journey do @current_journey=Journey.new
-    # end jny
-    # add this journey to @journeys array
-    deduct(@current_journey.fare)
+    if @current_journey.nil?
+      @current_journey = Journey.new
+      p Journey.new
+      @journeys << { in: @current_journey.entry_station, out: station }
+    end
+    p "One below"
+    p @current_journey
+    @current_journey.end_journey(station)
     @journeys.last[:out] = station.name
+    deduct(@current_journey.fare)
+    @current_journey = nil
     # @journeys[@trip_no-1][:out] = "#{station.name}(#{station.zone})"
   end
 

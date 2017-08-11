@@ -1,5 +1,6 @@
 require "oystercard"
 require "station"
+require 'journey'
 
 describe Oystercard do
   let(:station) { double :station }
@@ -125,9 +126,13 @@ describe Oystercard do
       allow(station1).to receive(:name) {"Aldgate"}
     end
 
+# this is crap apaz - Kay says we need to not worry about the little bits in the test but worry
+# about the actual outcomes we want to achieve - ie here we will worry about adding to the array if
+# no journey instantiated and charging a penalty fare,
+# or otherwise charging a normal fare and setting @current_journey to nil
 
     it "if we haven't touched in, touch_out instantiates a new journey with no entry station" do
-      expect(Journey).to receive(:new).with(nil)
+      expect(Journey).to receive(:new).with(no_args)
       subject.touch_out(station)
     end
 
