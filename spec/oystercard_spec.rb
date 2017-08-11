@@ -4,6 +4,7 @@ require 'journey'
 
 describe Oystercard do
   let(:station) { double :station }
+  let(:station1) { double :station1 }
   it "Default balance of zero" do
     new_card = Oystercard.new
     expect(new_card.balance).to eq 0
@@ -55,7 +56,7 @@ describe Oystercard do
       subject.touch_in(station)
     end
 
-    xit "can deduct the balance when touching out" do
+    it "can deduct the balance when touching out" do
       expect { subject.touch_out(station) }.to change { subject.balance }.by(-Oystercard::MIN_FARE)
     end
 
@@ -76,7 +77,7 @@ describe Oystercard do
 
     end
 
-    xit "will reduce the balance by a specified amount" do
+    it "will reduce the balance by a specified amount" do
       expect(subject.balance).to eq 9
     end
 
@@ -95,7 +96,6 @@ describe Oystercard do
   context 'touching in' do
     before(:each) do
       subject.top_up(10)
-      station1 = double(Station)
       allow(station).to receive(:name) {"Bank"}
       allow(station1).to receive(:name) {"Aldgate"}
     end
@@ -121,7 +121,6 @@ describe Oystercard do
   context 'touching out' do
     before(:each) do
       subject.top_up(10)
-      station1 = double(Station)
       allow(station).to receive(:name) {"Bank"}
       allow(station1).to receive(:name) {"Aldgate"}
     end
@@ -131,24 +130,29 @@ describe Oystercard do
 # no journey instantiated and charging a penalty fare,
 # or otherwise charging a normal fare and setting @current_journey to nil
 
-    it "if we haven't touched in, touch_out instantiates a new journey with no entry station" do
-      expect(Journey).to receive(:new).with(no_args)
-      subject.touch_out(station)
-    end
+    # it "if we haven't touched in, touch_out instantiates a new journey with no entry station" do
+    #   expect(Journey).to receive(:new).with(no_args)
+    #   subject.touch_out(station)
+    # end
 
-    it "sets current journey to be an instance of Journey" do
-      subject.touch_out(station)
-      expect(subject.current_journey.is_a?(Journey)). to eq true
-    end
+    # it "sets current journey to be an instance of Journey" do
+    #   subject.touch_out(station)
+    #   expect(subject.current_journey.is_a?(Journey)). to eq true
+    # end
 
-    it 'calls end journey on the current journey' do
-        # Possibly needs to be changed
-        expect(subject.current_journey).to receive(:end_journey).with(station)
-        subject.touch_out(station)
-    end
+    # it 'calls end journey on the current journey' do
+    #     # Possibly needs to be changed
+    #     expect(subject.current_journey).to receive(:end_journey).with(station)
+    #     subject.touch_out(station)
+    # end
 
     it "if new (penalty) journey instantiated, add it to journeys array" do
       expect { subject.touch_out(station) }.to change { subject.journeys.length }. by 1
+    end
+
+    it "adds a hash to the journey array (if not already added in touch in)" do
+      subject.touch_out(station1)
+      expect(subject.journeys.last.is_a?(Hash)).to eq true
     end
 
     it 'charges a fare on current journey' do
