@@ -54,7 +54,7 @@ describe Oystercard do
       subject.touch_in(station)
     end
 
-    it "can deduct the balance when touching out" do
+    xit "can deduct the balance when touching out" do
       expect { subject.touch_out(station) }.to change { subject.balance }.by(-Oystercard::MIN_FARE)
     end
 
@@ -75,7 +75,7 @@ describe Oystercard do
 
     end
 
-    it "will reduce the balance by a specified amount" do
+    xit "will reduce the balance by a specified amount" do
       expect(subject.balance).to eq 9
     end
 
@@ -92,37 +92,68 @@ describe Oystercard do
   end
 
   context 'touching in' do
+    before(:each) do
+      subject.top_up(10)
+      station1 = double(Station)
+      allow(station).to receive(:name) {"Bank"}
+      allow(station1).to receive(:name) {"Aldgate"}
+    end
 
     it 'checks if a journey is already in progress and charges pen fare if true' do
-
+        subject.touch_in(station)
+        expect {subject.touch_in(station)}.to change { subject.balance }.by(-Oystercard::PEN_FARE)
     end
 
     it 'starts a new journey when touching in' do
-
+      expect(Journey).to receive(:new).with(station)
+      subject.touch_in(station)
     end
+
+    it "sets current journey to be an instance of Journey" do
+      subject.touch_in(station)
+      expect(subject.current_journey.is_a?(Journey)).to eq true
+    end
+
 
   end
 
   context 'touching out' do
+    before(:each) do
+      subject.top_up(10)
+      station1 = double(Station)
+      allow(station).to receive(:name) {"Bank"}
+      allow(station1).to receive(:name) {"Aldgate"}
+    end
 
-    it "if we haven't touched in, touch-out instantiates a new journey with no entry station" do
 
+    it "if we haven't touched in, touch_out instantiates a new journey with no entry station" do
+      expect(Journey).to receive(:new).with(nil)
+      subject.touch_out(station)
+    end
+
+    it "sets current journey to be an instance of Journey" do
+      subject.touch_out(station)
+      expect(subject.current_journey.is_a?(Journey)). to eq true
     end
 
     it 'calls end journey on the current journey' do
-
+        # Possibly needs to be changed
+        expect(subject.current_journey).to receive(:end_journey).with(station)
+        subject.touch_out(station)
     end
 
     it "if new (penalty) journey instantiated, add it to journeys array" do
-
+      expect { subject.touch_out(station) }.to change { subject.journeys.length }. by 1
     end
 
     it 'charges a fare on current journey' do
-
+      subject.touch_in(station)
+      expect {subject.touch_out(station1)}.to change { subject.balance }.by(-Oystercard::MIN_FARE)
     end
 
     it 'resets current journey' do
-
+      subject.touch_out(station)
+      expect(subject.current_journey).to eq nil
     end
 
   end

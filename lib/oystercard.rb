@@ -6,7 +6,7 @@ class Oystercard
   MIN_FARE = 1
   PEN_FARE = 6 # touchin * 2   ... touchout *2
 
-  attr_reader :balance, :limit
+  attr_reader :balance, :limit, :current_journey
   attr_accessor :entry_station, :journeys
 
   def initialize(balance = DEFAULT_BALANCE)
@@ -23,8 +23,8 @@ class Oystercard
   end
 
   def touch_in(station)
-    # if current journey != nil then pen fare
-    # @current_journey = Journey.new(station)
+    deduct(@current_journey.fare) if @current_journey != nil
+    @current_journey = Journey.new(station)
     raise 'Insufficient funds' if insufficient_funds?
     @journeys << { in: station.name, out: 'nil' }
     # @journeys << {in: "#{station.name}(#{station.zone})", out: "nil"}
@@ -34,7 +34,7 @@ class Oystercard
     # if no current journey do @current_journey=Journey.new
     # end jny
     # add this journey to @journeys array
-    # @current_journey.fare
+    deduct(@current_journey.fare)
     @journeys.last[:out] = station.name
     # @journeys[@trip_no-1][:out] = "#{station.name}(#{station.zone})"
   end
